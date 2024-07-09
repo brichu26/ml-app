@@ -16,7 +16,7 @@ model_dict = {
 }
 
 # Streamlit app UI
-st.title('🎈 Medical Summarization of Doctor-Patient Dialogues')
+st.title('🎈 Medical Summarization of Doctor-Patient Dialogues 🤒')
 
 st.write('Enter the doctor-patient dialogue below to generate a medical summary.')
 
