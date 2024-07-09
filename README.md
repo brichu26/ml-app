@@ -1,4 +1,4 @@
-# 📦 Streamlit App Starter Kit 
+# 📦 Medical Summarization of Doctor-Patient Dialogues 
 ```
 ⬆️ (Replace above with your app's name)
 ```
