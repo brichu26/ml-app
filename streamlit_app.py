@@ -24,7 +24,7 @@ st.write('Enter the doctor-patient dialogue below to generate a medical summary.
 dialogue = st.text_area("Doctor-Patient Dialogue", height=300)
 
 # Model selection
-model_choice = st.radio("Choose a model for summarization:", ('Llama-3-8B-Instruct', 'T5-Small', 'Fine-Tuned BART'))
+model_choice = st.radio("Choose a model for summarization:", ('Llama-3-8B-Instruct(Base)', 'T5-Small', 'Fine-Tuned BART', 'Fine-Tuned Llama-3-8B'))
 
 # Placeholder for the summary
 summary_placeholder = st.empty()
