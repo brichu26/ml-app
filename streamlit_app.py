@@ -5,7 +5,7 @@ from transformers import pipeline
 @st.cache_resource
 def load_model(model_name):
     try:
-        summarizer = pipeline("summarization", model=model_name)
+        summarizer = pipeline("summarization", model=model_name, framework="pt")
         return summarizer
     except Exception as e:
         st.error(f"Error loading model {model_name}: {e}")
