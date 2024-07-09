@@ -4,3 +4,4 @@ hugchat
 streamlit-chat
 streamlit-extras
 transformers==4.41.0
+torch
