@@ -1,5 +1,5 @@
 import streamlit as st
-from transformers import pipeline, AutoModelForSeq2SeqLM, AutoTokenizer
+from transformers import pipeline
 
 # Function to load the summarization model
 @st.cache_resource
