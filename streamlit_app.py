@@ -1,47 +1,62 @@
 import streamlit as st
-from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
+from transformers import pipeline
 
-# Load models and tokenizers
-@st.cache_resource
-def load_model_and_tokenizer(model_name):
-    tokenizer = AutoTokenizer.from_pretrained(model_name)
-    model = AutoModelForSeq2SeqLM.from_pretrained(model_name)
-    return model, tokenizer
+# Function to load the summarization model
+def load_model(model_name):
+    summarizer = pipeline("summarization", model=model_name)
+    return summarizer
 
-# Dictionary to map model names to Hugging Face model identifiers
-model_dict = {
-    'Llama-3-8B-Instruct': 'google/llama-3-8b',  # Replace with actual model path
-    'T5-Small': 't5-small',
-    'Fine-Tuned BART': 'facebook/bart-large-cnn'  # Replace with actual model path if different
-}
+# Function to summarize dialogue
+def summarize_text(dialogue, model_name):
+    summarizer = load_model(model_name)
+    summary = summarizer(dialogue, max_length=150, min_length=30, do_sample=False)
+    return summary[0]['summary_text']
 
-# Streamlit app UI
-st.title('🎈 Medical Summarization of Doctor-Patient Dialogues 🤒')
+# Set up the Streamlit app layout
+st.title("Doctor-Patient Dialogue Summarizer")
 
-st.write('Enter the doctor-patient dialogue below to generate a medical summary.')
-
-# Text input box for the dialogue
-dialogue = st.text_area("Doctor-Patient Dialogue", height=300)
+# Input field for the dialogue
+user_dialogue = st.text_area("Enter the doctor-patient dialogue here:", height=300)
 
 # Model selection
-model_choice = st.radio("Choose a model for summarization:", ('Llama-3-8B-Instruct(Base)', 'T5-Small', 'Fine-Tuned BART', 'Fine-Tuned Llama-3-8B'))
+model_choice = st.selectbox(
+    "Select the summarization model:",
+    ["Llama-3-8B", "T5"]
+)
 
-# Placeholder for the summary
-summary_placeholder = st.empty()
+# Map user-friendly model names to actual model identifiers
+model_mapping = {
+    "Llama-3-8B": "knkarthick/MEETING_SUMMARY",  # Replace with the actual model name if different
+    "T5": "t5-base"
+}
 
+# Submit button
 if st.button("Generate Summary"):
-    if dialogue:
-        with st.spinner('Generating summary...'):
-            # Load the selected model and tokenizer
-            model_name = model_dict[model_choice]
-            model, tokenizer = load_model_and_tokenizer(model_name)
-            
-            # Generate summary
-            inputs = tokenizer(dialogue, return_tensors="pt", max_length=1024, truncation=True)
-            summary_ids = model.generate(inputs.input_ids, max_length=150, min_length=40, length_penalty=2.0, num_beams=4, early_stopping=True)
-            summary = tokenizer.decode(summary_ids[0], skip_special_tokens=True)
-            
-            # Display summary
-            summary_placeholder.text_area("Generated Summary", value=summary, height=300)
+    if user_dialogue:
+        with st.spinner("Generating summary..."):
+            selected_model = model_mapping[model_choice]
+            summary = summarize_text(user_dialogue, selected_model)
+            st.write("### Summary")
+            st.write(summary)
     else:
-        st.write("Please enter a doctor-patient dialogue to generate a summary.")
+        st.warning("Please enter a doctor-patient dialogue.")
+
+# Display example dialogues and summaries for testing
+if st.checkbox("Show example dialogues"):
+    examples = {
+        "Dialogue 1": "Doctor: How have you been feeling lately? Patient: I've been having a lot of headaches.",
+        "Dialogue 2": "Doctor: Are you experiencing any chest pain? Patient: Yes, it gets worse when I exercise."
+    }
+    example_choice = st.selectbox("Choose an example dialogue:", list(examples.keys()))
+    if example_choice:
+        st.write("### Selected Dialogue")
+        st.write(examples[example_choice])
+        if st.button("Generate Summary for Example"):
+            selected_model = model_mapping[model_choice]
+            summary = summarize_text(examples[example_choice], selected_model)
+            st.write("### Summary")
+            st.write(summary)
+
+if st.button("Reset"):
+    st.session_state.clear()
+    st.rerun()
