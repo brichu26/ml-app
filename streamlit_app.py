@@ -1,5 +1,5 @@
 import streamlit as st
 
-st.title('🎈 App Name')
+st.title('🎈 Medical Summarization of Doctor-Patient Dialogues')
 
 st.write('Hello world!')
