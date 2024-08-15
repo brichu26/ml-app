@@ -3,5 +3,7 @@ streamlit
 hugchat
 streamlit-chat
 streamlit-extras
-transformers==4.41.0
+transformers==4.43.2
 torch
+evaluate 
+peft
